@@ -89,6 +89,7 @@ import RoomsList from '@/components/chat/RoomsList.vue';
 import MessagesList from '@/components/chat/MessagesList.vue';
 import MessageInput from '@/components/chat/MessageInput.vue';
 import { authStore } from '@/store/authStore';
+import { socketService } from '@/service/webscokets';
 
 export default defineComponent({
   name: 'HomeView',
@@ -101,14 +102,12 @@ export default defineComponent({
     const roomNameInput = ref('')
     const roomSizeInput = ref('')
 
-    const socket = new WebSocket('ws://localhost:6100');
-
-    socket.onmessage = (event) => {
+    socketService.onmessage = (event) => {
       dataFromServer.value = JSON.parse(event.data)
     }
 
     const handleMessageSubmit = () => {
-      socket.send(JSON.stringify({
+      socketService.send(JSON.stringify({
         email: useAuthStore.user.email,
         dateSend: new Date,
         message: messageInput.value
@@ -118,10 +117,14 @@ export default defineComponent({
     const handleMessageInput = (value: string) => messageInput.value = value
 
     const handleRoomCreate = () => {
-      socket.send(JSON.stringify({
-        id: new Date(),
-        name: roomNameInput.value,
-        size: roomSizeInput.value
+      socketService.send(JSON.stringify({
+        action: 'create-room',
+        payload: {
+          name: roomNameInput.value,
+          description: "Description",
+          size: roomSizeInput.value,
+          users: []
+        }
       }))
     }
 

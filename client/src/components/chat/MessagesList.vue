@@ -3,7 +3,7 @@
     <main class="flex h-full items-center">
       <div class="flex w-full h-full bg-blue-200">
         <ul class="py-4 px-5   w-full overflow-y-scroll">
-          <li v-for="(msg, i) in messages" :key="i" class="bg-white rounded my-2 py-2 px-3">
+          <li v-for="(msg, i) in messages" :key="i" class="bg-white rounded my-2 py-2 px-3" @click="handleRoomClick">
             <header class="flex items-center">
               <span class="font-bold mr-2">{{ msg.email }} </span>
               <span class="text-sm">{{ formatDate(msg.dateSend) }}</span>
