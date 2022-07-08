@@ -5,10 +5,7 @@ const RoomSchema = new Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
     size: { type: Number, required: true },
-    users: {
-        type: [UserSchema],
-        default: []
-    }
+    users: { type: Array }
 })
 
 module.exports = model("room", RoomSchema)
