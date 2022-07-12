@@ -1,7 +1,7 @@
 <template>
-  <div class="default-layout w-full">
+  <div class="default-layout w-full h-screen">
     <the-header />
-    <main class="flex mx-auto mt-4 px-2">
+    <main class="flex mx-auto mt-4 px-2 h-[85%]">
       <router-view />
     </main>
   </div>

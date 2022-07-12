@@ -1,8 +1,8 @@
 <template>
-  <div class="w-full h-full">
+  <div class="w-full min-h-[100%]">
     <main class="flex h-full items-center">
-      <div class="flex w-full h-full bg-blue-200">
-        <ul class="py-4 px-5   w-full overflow-y-scroll">
+      <div class="flex w-full h-full">
+        <ul class="py-4 px-5 w-full overflow-y-scroll thin-scrollbar scrollbar-thumb-gray-900 scrollbar-track-gray-50">
           <li v-for="(msg, i) in messages" :key="i" class="bg-white rounded my-2 py-2 px-3" @click="handleRoomClick">
             <header class="flex items-center">
               <span class="font-bold mr-2">{{ msg.email }} </span>

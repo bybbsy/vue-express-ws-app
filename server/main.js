@@ -1,54 +1,55 @@
 require('dotenv').config()
+const { MONGO_APP, MONGO_DB, MONGO_NICK, MONGO_PW } = process.env
 
-const {
-    MONGO_APP,
-    MONGO_DB,
-    MONGO_NICK,
-    MONGO_PW
-} = process.env
-
-console.log(MONGO_NICK)
 const express = require('express')
-const { WebSocketServer, WebSocket } = require('ws')
+const { WebSocketServer } = require('ws')
 const { createServer } = require('http')
 const app = express()
 const server = createServer(app)
 const wss = new WebSocketServer({ server })
 const mongoose = require('mongoose')
-const messages = []
 
+const MessageController = require('./controllers/MessageController')
 
-const roomSchema = require('./model/room')
-
-mongoose.connect(`mongodb+srv://${MONGO_NICK}:${MONGO_PW}@${MONGO_APP}.6kddvz6.mongodb.net/${MONGO_DB}`, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose
+  .connect(
+    `mongodb+srv://${MONGO_NICK}:${MONGO_PW}@${MONGO_APP}.6kddvz6.mongodb.net/${MONGO_DB}`,
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
   .catch(err => console.error(err))
 
+wss.on('connection', async ws => {
+  try {
+    await MessageController.sendRooms(ws, wss)
 
-wss.on('connection', async (ws) => {
-    ws.on('message', async (msg) => {
-        const message = JSON.parse(msg)
-        const actionType = message.action;
-        console.log(actionType)
+    ws.on('message', async msg => { 
+      try {
+        const message = JSON.parse(msg) 
+        const actionType = message.action
 
-        const room = message.payload 
-
-        console.log(room)
-
-        const newRoom = new roomSchema(room)
-        await newRoom.save()
-
-        wss.clients.forEach(client => {
-            if(client.readyState === WebSocket.OPEN) {
-                
-                client.send(JSON.stringify({ messages }))
-            }
-        })
+        switch (actionType) {
+          case 'join-room':
+            MessageController.joinRoom(message.payload, ws, wss)
+            break
+          case 'create-room':
+            MessageController.createRoom(message.payload, ws, wss)
+            break
+					case 'leave-room':
+						MessageController.leaveRoom(message.payload, ws, wss)
+						break
+        }
+      } catch (e) {
+        console.log('Error: ' + e)
+      }
     })
-
-    const rooms = await roomSchema.find()
-    ws.send(JSON.stringify({ rooms })) 
+  } catch (e) {
+    console.log('Err: ' + e)
+  }
 })
 
 server.listen(6100, async () => {
-    console.log('listeing on 6100 port')
+  console.log('listeing on 6100 port')
 })
+
+
+// TODO Add WebRTC

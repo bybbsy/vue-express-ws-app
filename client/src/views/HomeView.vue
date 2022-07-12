@@ -1,6 +1,6 @@
 <template>
   <div class="w-full flex border-[1px] border-blue-500 rounded-md">
-    <div class="w-1/5 bg-slate-800 rounded-l-md">
+    <div class="w-1/5 flex flex-col h-full bg-slate-800 rounded-l-md">
       <div class="my-2">
         <button @click.prevent="handleToggleCreateRoom"
           class="bg-transparent hover:bg-white-500 text-white font-semibold hover:text-blue-700 hover:bg-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
@@ -35,36 +35,45 @@
       <RoomsList />
     </div>
 
-    <div class="w-4/5 bg-slate-50 py-4 px-6 rounded-r-md">
-      <header class="mb-6">
+    <div class="w-4/5 flex flex-col h-full bg-slate-700 py-4 px-6 rounded-r-md">
+      <header class="mb-6 flex items-center">
         <nav class="p-0">
           <ul class="flex">
             <li class="mr-2">
               <button
-                class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                class="bg-transparent hover:bg-blue-500 text-white font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                 Back
               </button>
             </li>
-            <li class="">
+            <li v-if="inSelectedRoom">
               <button
-                class="bg-transparent hover:bg-orange-400 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+              @click="handleLeaveRoom"
+                class="bg-transparent hover:bg-orange-400 text-white font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                 Leave
+              </button>
+            </li>
+            <li v-else>
+              <button
+              @click="handleJoinRoom"
+                class="bg-transparent hover:bg-emerald-500 text-white font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                Join
               </button>
             </li>
           </ul>
         </nav>
+        <h4 class="text-white w-full font-bolder text-lg">{{ currentRoom?.name }}</h4>
       </header>
 
-      <div class="flex w-full h-[48rem] flex-col">
-        <div class="h-[90%]">
+      <div class="flex w-full h-full flex-col">
+        <div class="h-[85%] flex">
           <MessagesList :messages="dataFromServer.messages" />
         </div>
         <div>
-          <div class="flex w-full my-5">
+          <div class="flex w-full mt-5">
             <MessageInput v-on:input-data="handleMessageInput" />
             <div class="">
               <button @click="handleMessageSubmit"
-                class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
+                class="bg-transparent hover:bg-blue-500 text-white font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">
                 Send
               </button>
             </div>
@@ -89,7 +98,9 @@ import RoomsList from '@/components/chat/RoomsList.vue';
 import MessagesList from '@/components/chat/MessagesList.vue';
 import MessageInput from '@/components/chat/MessageInput.vue';
 import { authStore } from '@/store/authStore';
-import { socketService } from '@/service/webscokets';
+import { useSocketService } from '@/service/webscokets';
+import { computed } from '@vue/reactivity';
+import { chatStore } from '@/store/chatStore';
 
 export default defineComponent({
   name: 'HomeView',
@@ -97,27 +108,57 @@ export default defineComponent({
     const messageInput = ref('')
     const dataFromServer = ref([])
     const useAuthStore = authStore()
+    const useChatStore = chatStore()
     const isCreateRoomModal = ref(false)
 
     const roomNameInput = ref('')
     const roomSizeInput = ref('')
 
-    socketService.onmessage = (event) => {
-      dataFromServer.value = JSON.parse(event.data)
-    }
+    // socketService.onmessage = (event) => {
+    //   dataFromServer.value = JSON.parse(event.data)
+    // }
+
+    useSocketService.onMessage((evt) => {
+      dataFromServer.value = JSON.parse(evt.data)
+    })
+
+
+    const currentRoom = computed(() => useChatStore.currentRoom)
+    const inSelectedRoom = computed(() => useChatStore.inSelectedRoom)
 
     const handleMessageSubmit = () => {
-      socketService.send(JSON.stringify({
+      // socketService.send(JSON.stringify({
+      //   email: useAuthStore.user.email,
+      //   dateSend: new Date,
+      //   message: messageInput.value
+      // }))
+
+      useSocketService.send({
+        action: 'send-message',
+        payload: {
         email: useAuthStore.user.email,
         dateSend: new Date,
         message: messageInput.value
-      }))
+      }
+      })
     }
 
     const handleMessageInput = (value: string) => messageInput.value = value
 
+    const handleLeaveRoom = () => useChatStore.leaveRoom()
+    const handleJoinRoom = () => useChatStore.joinRoom()
+
     const handleRoomCreate = () => {
-      socketService.send(JSON.stringify({
+      // socketService.send(JSON.stringify({
+      //   action: 'create-room',
+      //   payload: {
+      //     name: roomNameInput.value,
+      //     description: "Description",
+      //     size: roomSizeInput.value,
+      //     users: []
+      //   }
+      // }))
+      useSocketService.send({
         action: 'create-room',
         payload: {
           name: roomNameInput.value,
@@ -125,7 +166,9 @@ export default defineComponent({
           size: roomSizeInput.value,
           users: []
         }
-      }))
+      })
+
+
     }
 
     const handleToggleCreateRoom = () => isCreateRoomModal.value = !isCreateRoomModal.value
@@ -139,7 +182,11 @@ export default defineComponent({
       roomNameInput,
       roomSizeInput,
       isCreateRoomModal,
-      handleToggleCreateRoom
+      handleToggleCreateRoom,
+      currentRoom,
+      inSelectedRoom,
+      handleLeaveRoom,
+      handleJoinRoom
     }
   },
   components: {
@@ -149,3 +196,8 @@ export default defineComponent({
   }
 });
 </script>
+
+<style>
+.thin-scrollbar::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}</style>
