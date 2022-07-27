@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 
 export interface IUser {
+  uid?: string | null
   email: string | null,
   password: string | null
 }
@@ -13,6 +14,7 @@ export const authStore = defineStore('auth-store', {
   state: (): IAuth => {
     return {
       user: {
+        uid: '62deaac7b7aec18bd3d4d9de',
         email: null,
         password: null
       }

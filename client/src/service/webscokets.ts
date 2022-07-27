@@ -1,6 +1,6 @@
 // export const socketService = new WebSocket('ws://localhost:6100');
 
-export type ActionTypes = 'create-room' | 'visit-room' | 'join-room' | 'leave-room' | 'send-message' | 'receive-message'
+export type ActionTypes = 'create-room' | 'visit-room' | 'join-room' | 'leave-room' | 'send-message' | 'receive-message' | 'receive-chat' | 'receive-rooms'
 
 
 export interface IWebsocketBody {

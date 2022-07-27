@@ -32,7 +32,6 @@ export default defineComponent({
       router.push({name: 'auth'})
     }
 
-
     return {
       layout
     }

@@ -2,14 +2,8 @@
   <div class="w-full min-h-[100%]">
     <main class="flex h-full items-center">
       <div class="flex w-full h-full">
-        <ul class="py-4 px-5 w-full overflow-y-scroll thin-scrollbar scrollbar-thumb-gray-900 scrollbar-track-gray-50">
-          <li v-for="(msg, i) in messages" :key="i" class="bg-white rounded my-2 py-2 px-3" @click="handleRoomClick">
-            <header class="flex items-center">
-              <span class="font-bold mr-2">{{ msg.email }} </span>
-              <span class="text-sm">{{ formatDate(msg.dateSend) }}</span>
-            </header>
-            <p class="text-left">{{ msg.message }}</p>
-          </li>
+        <ul class="py-4 pr-5 w-full overflow-y-scroll thin-scrollbar scrollbar-thumb-gray-900 scrollbar-track-gray-50">
+          <TheMessage v-for="msg in messages" :key="msg._id" :message="msg" />
         </ul>
       </div>
     </main>
@@ -17,25 +11,22 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from 'vue'
-import { formatDistanceToNow } from 'date-fns'
+import { defineComponent, PropType } from 'vue'
+import TheMessage from './TheMessage.vue'
 
-interface IMessage {
-  email: string,
-  dateSend: string,
-  message: string
+export interface IMessage {
+  _id: string,
+  authorName: string,
+  dateSent: number,
+  text: string
 }
 
 export default defineComponent({
   props: {
     messages: Array as PropType<IMessage[]>
   },
-  setup() {
-    const formatDate = (date: number) => formatDistanceToNow(new Date(date), { addSuffix: true})
-
-    return {
-      formatDate
-    }
+  components: {
+    TheMessage
   }
 })
 </script>
