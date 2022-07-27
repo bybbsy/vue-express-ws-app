@@ -37,6 +37,15 @@ wss.on('connection', async ws => {
 					case 'leave-room':
 						MessageController.leaveRoom(message.payload, ws, wss)
 						break
+          case 'send-message':
+            MessageController.sendMessage(message.payload, ws, wss)
+            break
+          case 'receive-chat':
+            MessageController.sendChat(message.payload, ws, wss)
+            break
+          case 'receive-rooms':
+            MessageController.sendRooms(ws, wss)
+            break
         }
       } catch (e) {
         console.log('Error: ' + e)

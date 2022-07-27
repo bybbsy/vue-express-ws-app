@@ -1,20 +1,23 @@
 const { Schema, model } = require('mongoose')
 
-const MessagesSchema = new Schema({
+const ChatSchema = new Schema({
     roomId: { type: Schema.Types.ObjectId },
     messages: [
         {
-            author: {
-                type: string, required: true
+            authorName: {
+                type: String, required: true
+            },
+            authorId: {
+                type: Schema.Types.ObjectId, required: true
             },
             dateSent: {
-                type: string, required: true
+                type: Schema.Types.Date, required: true
             },
             text: {
-                type: string, required: true
+                type: String, required: true
             }
         }
     ]
 })
 
-module.exports = model('messages', MessagesSchema)
+module.exports = model('chat', ChatSchema)

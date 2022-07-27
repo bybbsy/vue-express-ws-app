@@ -1,37 +1,41 @@
 const roomSchema = require('../model/room')
 const { WebSocket } = require('ws')
+const ChatService = require('../services/chat.service')
 
 class MessageController {
   constructor () {}
 
   async createRoom (room, ws, wss) {
     try {
-      console.log('Create func')
+
+      console.log(room)
       const newRoom = new roomSchema(room)
 
       await newRoom.save()
 
-      this.sendRooms(ws, wss)
+      await ChatService.createChat(newRoom.id)
+
+      this.sendRoomsAndChat({room}, ws, wss)
     } catch (e) {
       console.log(e)
     }
   }
 
-  async joinRoom (payload, ws, wss) {
-    console.log('here')
+  async joinRoom (payload, ws, wss) { 
     try {
       const { room, username } = payload
-
       const roomInDb = await roomSchema.findById(room._id)
 
-      const userInRoom = !!roomInDb.users.some(user => user !== username)
+      const userInRoom = roomInDb.users.some(user => user == username)
+      const isNotFull = roomInDb.users.length < roomInDb.size
 
-      if (!userInRoom) {
+      if (!userInRoom && isNotFull) {
         roomInDb.users.push(username)
         await roomInDb.save()
       }
 
-      this.sendRooms(ws, wss)
+      this.sendRoomsAndChat(payload, ws, wss)
+
     } catch (e) {
       console.log(e)
     }
@@ -52,6 +56,7 @@ class MessageController {
       }
 
       this.sendRooms(ws, wss)
+
     } catch (e) {
       console.log(e)
     }
@@ -66,6 +71,48 @@ class MessageController {
           ws.send(JSON.stringify({ rooms }))
         }
       })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async sendChat(payload, ws, wss) {
+    try {
+      const { _id } = payload.room; 
+      const chatMessages = await ChatService.getChatMessages(_id)
+
+      wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          ws.send(JSON.stringify({ chatMessages }))
+        }
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async sendRoomsAndChat(payload, ws, wss) {
+    try {
+      const rooms = await roomSchema.find()
+      const { _id } = payload.room; 
+      const chatMessages = await ChatService.getChatMessages(_id)
+ 
+      wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify({ rooms, chatMessages }))
+        }
+      })
+
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async sendMessage(payload, ws, wss) {
+    try {
+      ChatService.sendMessage(payload, ws, wss)
+
+      this.sendRoomsAndChat(payload, ws, wss)
     } catch (e) {
       console.log(e)
     }
