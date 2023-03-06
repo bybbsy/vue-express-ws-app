@@ -1,10 +1,12 @@
-import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import { configureStore, ThunkAction, Action, combineReducers } from '@reduxjs/toolkit';
+import { CurrentRoomSlice } from './currentRoom/state';
+
+export const rootReducer = combineReducers({
+  currentRoom: CurrentRoomSlice.reducer
+})
 
 export const store = configureStore({
-  reducer: {
-    counter: counterReducer,
-  },
+  reducer: rootReducer
 });
 
 export type AppDispatch = typeof store.dispatch;
