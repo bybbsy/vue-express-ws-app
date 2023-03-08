@@ -1,5 +1,5 @@
 import { IRoomItem } from "./RoomList"
-import { Box, ListItem, Text } from "@chakra-ui/react";
+import { Badge, Box, Button, ListItem, Stack, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
 interface RoomItemProps {
@@ -9,6 +9,8 @@ interface RoomItemProps {
 export function RoomItem({
   room,
 }: RoomItemProps) {
+  const isJoinedRoom = true;
+
   return (
     <ListItem
       height='auto'
@@ -18,9 +20,10 @@ export function RoomItem({
         bg: '#dce1e6'
       }}
       borderBottom="1px solid #dce1e6">
-      <Link
-        to={'/rooms/' + room._id}
-        >
+      <Stack
+        direction='row'
+        justifyContent='space-between'
+        alignItems='center'>
         <Box
           display='flex'
           flexDirection='column'
@@ -29,10 +32,40 @@ export function RoomItem({
         >
           <Text
             fontSize='larger'
-          >{room.name}</Text>
-          <Text
-            marginY='2'>{room.users.length}/{room.size}</Text>
-        </Box></Link>
+          >
+            {room.name}
+          </Text>
+          <Box
+            marginY='2'>
+            <Badge
+              variant='solid'
+              colorScheme='blue'
+              fontSize='sm'
+              >
+              {room.users.length} / {room.size}
+            </Badge>
+          </Box>
+        </Box>
+        <Stack direction='row'>
+          {isJoinedRoom &&
+            <Link
+              to={'/rooms/' + room._id}
+
+            >
+              <Button colorScheme='blue'>Перейти</Button>
+            </Link>}
+          {isJoinedRoom
+            ? <Button
+              colorScheme='red'>
+              Выйти
+            </Button>
+            : <Button
+              colorScheme='green'>
+              Присоединиться
+            </Button>
+          }
+        </Stack>
+      </Stack>
     </ListItem>
   )
 }
