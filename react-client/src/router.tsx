@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
-import { RoomsList } from "./pages/RoomsList";
-import { Room } from "./pages/Room";
+import { RoomsPage } from "./pages/RoomsPage";
+import { ChatPage } from "./pages/ChatPage";
 import { MainPage } from "./pages/MainPage";
 
 export const router = createBrowserRouter([
@@ -10,11 +10,11 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/rooms',
-        element: <RoomsList />
+        element: <RoomsPage />
       },
       {
         path: '/rooms/:id',
-        element: <Room />
+        element: <ChatPage />
       }
     ]
   }

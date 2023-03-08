@@ -1,9 +1,27 @@
 import { CheckIcon } from "@chakra-ui/icons";
 import { Box, Button, Grid, GridItem, List, ListItem, Textarea, Text, Stack } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
 import { MessagesList } from "../components/Messages/MessagesList";
+import { WebsocketsContext } from "../contexts/websocket.context";
 
-export function Room() {
+export function ChatPage () {
+  const ws = useContext(WebsocketsContext)!;
+  const { id } = useParams();
+
+  useEffect(() => {
+    if(ws.isReady) {
+      ws.send({
+        action: 'receive-chat',
+        payload: {
+          room: {
+            '_id': id
+          }
+        }
+      })
+    }
+  }, [])
+
   return (
     <Grid
       py='2'

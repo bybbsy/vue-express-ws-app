@@ -1,9 +1,13 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, IconButton, Input, InputGroup, InputRightElement, Stack } from "@chakra-ui/react";
-import { useRef, useState } from "react";
-import { RoomLits } from "../components/Rooms/RoomList";
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { IRoomItem, RoomLits } from "../components/Rooms/RoomList";
+import { WebsocketsContext } from "../contexts/websocket.context";
+import { SocketService } from "../services/websocket.service";
 
-export function RoomsList() {
+export function RoomsPage() {
+  const ws = useContext(WebsocketsContext);
+  const [rooms, setRooms] = useState<IRoomItem[] | []>();
   const [searchValue, setSearchValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -13,6 +17,23 @@ export function RoomsList() {
     setSearchValue('');
     inputRef.current?.focus()
   };
+
+  useLayoutEffect(() => {
+    if(ws?.isReady) {
+      ws.send({
+        action: 'receive-rooms',
+        payload: {}
+      })
+    }
+
+    ws?.onMessage((evt: any) => {
+      const data= JSON.parse(evt.data)
+      console.log('data', data)
+      if(data.rooms) {
+        setRooms(data.rooms)
+      }
+    })
+  }, [])
 
   return (
     <Box
@@ -46,7 +67,7 @@ export function RoomsList() {
               onClick={handleInputClearing} />
           </InputRightElement>
         </InputGroup>
-        <RoomLits />
+        <RoomLits rooms={rooms as IRoomItem[]}/>
       </Stack>
     </Box>
   )

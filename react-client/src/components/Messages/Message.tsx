@@ -1,6 +1,7 @@
 import { Box, ListItem, Text } from "@chakra-ui/react";
 
 export interface MessageType {
+  id: string,
   isMy: boolean,
   author?: string,
   text: string,

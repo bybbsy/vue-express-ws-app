@@ -66,11 +66,12 @@ class MessageController {
     try {
       const rooms = await roomSchema.find()
 
-      wss.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({ rooms }))
-        }
-      })
+      // wss.clients.forEach(client => {
+      //   if (client.readyState === WebSocket.OPEN) {
+      //     ws.send(JSON.stringify({ rooms }))
+      //   }
+      // })
+      ws.send(JSON.stringify({ rooms }))
     } catch (e) {
       console.log(e)
     }
@@ -81,11 +82,12 @@ class MessageController {
       const { _id } = payload.room; 
       const chatMessages = await ChatService.getChatMessages(_id)
 
-      wss.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({ chatMessages }))
-        }
-      })
+      // wss.clients.forEach(client => {
+      //   if (client.readyState === WebSocket.OPEN) {
+      //     ws.send(JSON.stringify({ chatMessages }))
+      //   }
+      // })
+      ws.send(JSON.stringify({ chatMessages }))
     } catch (e) {
       console.log(e)
     }
@@ -97,12 +99,13 @@ class MessageController {
       const { _id } = payload.room; 
       const chatMessages = await ChatService.getChatMessages(_id)
  
-      wss.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify({ rooms, chatMessages }))
-        }
-      })
+      // wss.clients.forEach(client => {
+      //   if (client.readyState === WebSocket.OPEN) {
+      //     client.send(JSON.stringify({ rooms, chatMessages }))
+      //   }
+      // })
 
+      ws.send(JSON.stringify({ chatMessages }))
     } catch (e) {
       console.log(e)
     }

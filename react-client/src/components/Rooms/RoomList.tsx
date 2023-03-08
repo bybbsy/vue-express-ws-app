@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { RoomItem } from "./RoomItem";
 import { List } from '@chakra-ui/react';
+import { WebsocketsContext } from '../../contexts/websocket.context';
+import { SocketService } from '../../services/websocket.service';
 
 export interface IRoomItem {
   _id: string | number,
@@ -10,31 +12,45 @@ export interface IRoomItem {
   users: string[]
 }
 
-export function RoomLits() {
-  const rooms: IRoomItem[] = [
-    {
-      _id: 1,
-      name: "Jeff's room",
-      description: '',
-      users: [],
-      size: 10
-    },
-    {
-      _id: 2,
-      name: "Senla Chat Tula",
-      description: '',
-      users: [],
-      size: 100
+export function RoomLits({rooms}: {rooms: IRoomItem[]}) {
+  const currentUser = localStorage.getItem('email') || '';
+  const ws = useContext(WebsocketsContext)!;
+  console.log('s')
+  const handleJoinRoom = (room: IRoomItem) => {
+    if (ws.isReady) {
+      ws.send({
+        action: 'join-room',
+        payload: {
+          room: room,
+          username: currentUser
+        }
+      })
     }
-  ];
+  };
+
+  const handleLeaveRoom = (room: IRoomItem) => {
+    if(ws.isReady) {
+      ws.send({
+        action: 'leave-room',
+        payload: {
+          room: room,
+          username: currentUser
+        }
+      })
+    }
+  };
+
 
   return (
     <div>
       <List>
-        {rooms.map(room =>
+        {rooms && rooms.map(room =>
           <RoomItem
             key={room._id}
             room={room}
+            isJoinedRoom={room.users.includes(currentUser)}
+            handleJoinRoom={() => handleJoinRoom(room)}
+            handleLeaveRoom={() => handleLeaveRoom(room)}
           />)}
       </List>
     </div>

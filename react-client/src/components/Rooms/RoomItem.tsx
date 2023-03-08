@@ -3,13 +3,18 @@ import { Badge, Box, Button, ListItem, Stack, Text } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
 interface RoomItemProps {
-  room: IRoomItem
+  room: IRoomItem,
+  isJoinedRoom: boolean,
+  handleJoinRoom: () => void,
+  handleLeaveRoom: () => void
 }
 
 export function RoomItem({
   room,
+  isJoinedRoom,
+  handleJoinRoom,
+  handleLeaveRoom
 }: RoomItemProps) {
-  const isJoinedRoom = true;
 
   return (
     <ListItem
@@ -56,10 +61,12 @@ export function RoomItem({
             </Link>}
           {isJoinedRoom
             ? <Button
+              onClick={handleLeaveRoom}
               colorScheme='red'>
               Выйти
             </Button>
             : <Button
+              onClick={handleJoinRoom}
               colorScheme='green'>
               Присоединиться
             </Button>
