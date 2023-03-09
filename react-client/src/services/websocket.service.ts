@@ -43,4 +43,4 @@ export class SocketService {
   }
 }
 
-// export const useSocketService = new SocketService()
+export const useSocketService = new SocketService()
