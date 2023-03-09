@@ -1,10 +1,11 @@
 import { CheckIcon } from "@chakra-ui/icons";
 import { Box, Button, Grid, GridItem, List, ListItem, Textarea, Text, Stack } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { MessagesList } from "../components/Messages/MessagesList";
 import { IRoomItem } from "../components/Rooms/RoomList";
 import { WebsocketsContext } from "../contexts/websocket.context";
+import { MessageInput } from '../components/Chat/MessageInput';
 
 export interface IChatState {
   currentRoom: IRoomItem | null
@@ -31,6 +32,22 @@ export function ChatPage () {
   const { id } = useParams();
   const [chatMessages, setChatMessages] = useState<IChatMessage[] | []>([]);
   const currUser = localStorage.getItem('email') || '';
+
+  const handleSendMessage = () => {
+    ws.send({
+      action: 'send-message',
+      payload: {
+        room: {
+          '_id': id
+        },
+        message: {
+          authorName: currUser,
+          dateSent: new Date,
+          text: 'asdas'
+        }
+      }
+    })
+  }
 
   const handleOnReceiveChatEvent = (evt: any) => {
     const data = JSON.parse(evt.data);
@@ -116,9 +133,10 @@ export function ChatPage () {
           padding='5'
           roundedBottom='md'
         >
-          <Textarea resize='none' />
+          <MessageInput />
           <Button
             colorScheme='blue'
+            onClick={handleSendMessage}
           >
             Отправить
           </Button>
