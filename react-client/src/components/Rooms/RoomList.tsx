@@ -15,10 +15,10 @@ export interface IRoomItem {
 export function RoomLits({rooms}: {rooms: IRoomItem[]}) {
   const currentUser = localStorage.getItem('email') || '';
   const ws = useContext(WebsocketsContext)!;
-  console.log('s')
+
   const handleJoinRoom = (room: IRoomItem) => {
     if (ws.isReady) {
-      ws.send({
+      ws.send( {
         action: 'join-room',
         payload: {
           room: room,

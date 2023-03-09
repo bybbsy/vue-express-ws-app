@@ -1,3 +1,5 @@
+import { io, Socket } from "socket.io-client";
+
 export type ActionTypes =
   'create-room'
   | 'visit-room'
@@ -8,6 +10,10 @@ export type ActionTypes =
   | 'receive-chat'
   | 'receive-rooms'
 
+export type ResponeActionTypes =
+  'create-room-accepted'
+  | 'receive-chat-accepted'
+  | 'receive-rooms-accepted'
 
 export interface IWebsocketBody {
   action: ActionTypes,
@@ -15,16 +21,15 @@ export interface IWebsocketBody {
 }
 
 export class SocketService {
-  static client: WebSocket;
+  client: WebSocket;
 
   constructor() {
-    SocketService.client = new WebSocket('ws://localhost:6100')
+    this.client = new WebSocket('ws://localhost:6100')
   }
-
 
   send(body: IWebsocketBody) {
     try {
-      SocketService.client.send(JSON.stringify(body))
+      this.client.send(JSON.stringify(body))
     } catch (e) {
       console.log(e)
     }
@@ -32,14 +37,22 @@ export class SocketService {
 
   onMessage(callback: (evt: MessageEvent<any>) => any) {
     try {
-      SocketService.client.onmessage = callback
+      this.client.addEventListener('message', callback)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  off<T extends keyof WebSocketEventMap>(type: T, callback: (this: WebSocket, ev: WebSocketEventMap[T]) => any) {
+    try {
+      this.client.removeEventListener(type, callback);
     } catch (e) {
       console.log(e)
     }
   }
 
   get isReady(): boolean {
-    return SocketService.client.readyState === 1
+    return this.client.readyState === 1
   }
 }
 

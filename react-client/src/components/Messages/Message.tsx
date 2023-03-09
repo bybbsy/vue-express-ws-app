@@ -1,15 +1,8 @@
 import { Box, ListItem, Text } from "@chakra-ui/react";
-
-export interface MessageType {
-  id: string,
-  isMy: boolean,
-  author?: string,
-  text: string,
-  datetimeSend?: string | Date
-}
+import { IChatMessage } from "../../pages/ChatPage";
 
 type MessageProps = {
-  message: MessageType
+  message: IChatMessage
 }
 
 export function Message({ message }: MessageProps) {
@@ -31,8 +24,8 @@ export function Message({ message }: MessageProps) {
         cursor='pointer'
         >
         <Box display='flex' columnGap='2' alignItems='center'>
-          <Text color='blue.400'> {message.author}</Text>
-          <Text color='gray.400' fontSize='small'>{message.datetimeSend?.toString()}</Text>
+          <Text color='blue.400'>{message.authorName}</Text>
+          <Text color='gray.400' fontSize='small'>{message.dateSent.toString()}</Text>
         </Box>
         <Box>
           <Text textAlign='left'>{message.text}</Text>

@@ -1,17 +1,52 @@
 import { CheckIcon } from "@chakra-ui/icons";
 import { Box, Button, Grid, GridItem, List, ListItem, Textarea, Text, Stack } from "@chakra-ui/react";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { MessagesList } from "../components/Messages/MessagesList";
+import { IRoomItem } from "../components/Rooms/RoomList";
 import { WebsocketsContext } from "../contexts/websocket.context";
+
+export interface IChatState {
+  currentRoom: IRoomItem | null
+  joinedRooms: IRoomItem[]
+  currentChat: ICurrentChat | null
+}
+
+export interface ICurrentChat {
+  _id: string | null,
+  messages: IChatMessage[]
+}
+
+export interface IChatMessage {
+  isMy: boolean,
+  authorName: string,
+  dateSent: Date,
+  text: string,
+  _id: string
+}
+
 
 export function ChatPage () {
   const ws = useContext(WebsocketsContext)!;
   const { id } = useParams();
+  const [chatMessages, setChatMessages] = useState<IChatMessage[] | []>([]);
+  const currUser = localStorage.getItem('email') || '';
+
+  const handleOnReceiveChatEvent = (evt: any) => {
+    const data = JSON.parse(evt.data);
+
+    if(data.chatMessages) {
+      const chatMessages = data.chatMessages.messages.map((msg: IChatMessage) => ({
+        ...msg,
+        isMy: msg.authorName === currUser
+      }))
+      setChatMessages(chatMessages);
+    }
+  }
 
   useEffect(() => {
     if(ws.isReady) {
-      ws.send({
+      ws.send( {
         action: 'receive-chat',
         payload: {
           room: {
@@ -19,6 +54,12 @@ export function ChatPage () {
           }
         }
       })
+    }
+
+    ws.onMessage(handleOnReceiveChatEvent);
+
+    return () => {
+      ws.off('message', handleOnReceiveChatEvent);
     }
   }, [])
 
@@ -65,7 +106,7 @@ export function ChatPage () {
           roundedTop='md'
           overflowY='scroll'
         >
-          <MessagesList />
+          <MessagesList messages={chatMessages} />
         </Box>
         <Box
           display='flex'

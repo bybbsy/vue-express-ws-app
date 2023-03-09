@@ -1,13 +1,12 @@
 import { CloseIcon } from "@chakra-ui/icons";
 import { Box, IconButton, Input, InputGroup, InputRightElement, Stack } from "@chakra-ui/react";
-import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { IRoomItem, RoomLits } from "../components/Rooms/RoomList";
 import { WebsocketsContext } from "../contexts/websocket.context";
-import { SocketService } from "../services/websocket.service";
 
 export function RoomsPage() {
   const ws = useContext(WebsocketsContext);
-  const [rooms, setRooms] = useState<IRoomItem[] | []>();
+  const [rooms, setRooms] = useState<IRoomItem[] | []>([]);
   const [searchValue, setSearchValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -18,21 +17,27 @@ export function RoomsPage() {
     inputRef.current?.focus()
   };
 
-  useLayoutEffect(() => {
-    if(ws?.isReady) {
+  const handleOnMessageEvent = (evt: any) => {
+    const data = JSON.parse(evt.data)
+    console.log('data', data)
+    if (data.rooms) {
+      setRooms(data.rooms)
+    }
+  }
+
+  useEffect(() => {
+    if (ws.isReady) {
       ws.send({
         action: 'receive-rooms',
         payload: {}
       })
     }
 
-    ws?.onMessage((evt: any) => {
-      const data= JSON.parse(evt.data)
-      console.log('data', data)
-      if(data.rooms) {
-        setRooms(data.rooms)
-      }
-    })
+    ws.onMessage(handleOnMessageEvent)
+
+    return () => {
+      ws.off('message', handleOnMessageEvent);
+    }
   }, [])
 
   return (
@@ -67,7 +72,7 @@ export function RoomsPage() {
               onClick={handleInputClearing} />
           </InputRightElement>
         </InputGroup>
-        <RoomLits rooms={rooms as IRoomItem[]}/>
+        <RoomLits rooms={rooms as IRoomItem[]} />
       </Stack>
     </Box>
   )
