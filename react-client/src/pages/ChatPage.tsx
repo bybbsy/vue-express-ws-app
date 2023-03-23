@@ -51,7 +51,7 @@ export function ChatPage () {
 
   const handleOnReceiveChatEvent = (evt: any) => {
     const data = JSON.parse(evt.data);
-
+    console.log("created")
     if(data.chatMessages) {
       const chatMessages = data.chatMessages.messages.map((msg: IChatMessage) => ({
         ...msg,
@@ -117,6 +117,9 @@ export function ChatPage () {
         flexDirection='column'
         overflowY='hidden'
       >
+        <Box>
+          <p>Room id: {id}</p>
+        </Box>
         <Box
           bg='white'
           flex='1 1 100%'

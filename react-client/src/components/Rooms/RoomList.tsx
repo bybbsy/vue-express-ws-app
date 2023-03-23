@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { RoomItem } from "./RoomItem";
 import { List } from '@chakra-ui/react';
 import { WebsocketsContext } from '../../contexts/websocket.context';
@@ -41,9 +41,9 @@ export function RoomLits({rooms}: {rooms: IRoomItem[]}) {
     }
   };
 
-
   return (
     <div>
+      <a href=""></a>
       <List>
         {rooms && rooms.map(room =>
           <RoomItem
@@ -57,3 +57,7 @@ export function RoomLits({rooms}: {rooms: IRoomItem[]}) {
     </div>
   )
 }
+function useRef<T>(arg0: null) {
+  throw new Error('Function not implemented.');
+}
+

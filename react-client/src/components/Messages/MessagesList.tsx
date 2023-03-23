@@ -1,6 +1,7 @@
 import { List } from "@chakra-ui/react";
 import { IChatMessage } from "../../pages/ChatPage";
 import { Message } from "./Message";
+import React, {useEffect} from "react";
 
 interface IMessageListProps {
   messages: IChatMessage[]
@@ -116,8 +117,21 @@ export function MessagesList({
   //     datetimeSend: '17:02',
   //   }
   // ]
+
+  let listRef = React.useRef<HTMLUListElement | null>(null);
+
+  useEffect(() => {
+    if(listRef.current) {
+      const children = listRef.current?.children;
+
+      children[children?.length - 1]?.scrollIntoView({ behavior: 'smooth'});
+    }
+  }, [messages])
+
+  console.log("here")
   return (
     <List
+      ref={listRef}
       roundedTop='md'
       padding='2'>
       {messages && messages.map(msg => <Message key={msg._id} message={msg}/>)}
