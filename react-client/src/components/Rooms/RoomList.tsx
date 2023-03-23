@@ -13,6 +13,7 @@ export interface IRoomItem {
 }
 
 export function RoomLits({rooms}: {rooms: IRoomItem[]}) {
+  console.log(rooms)
   const currentUser = localStorage.getItem('email') || '';
   const ws = useContext(WebsocketsContext)!;
 

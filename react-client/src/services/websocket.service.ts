@@ -17,7 +17,7 @@ export type ResponeActionTypes =
 
 export interface IWebsocketBody {
   action: ActionTypes,
-  payload: any
+  payload?: any
 }
 
 export class SocketService {
@@ -29,6 +29,9 @@ export class SocketService {
 
   send(body: IWebsocketBody) {
     try {
+      const payload = body.payload || {};
+      body.payload = payload;
+
       this.client.send(JSON.stringify(body))
     } catch (e) {
       console.log(e)
