@@ -1,9 +1,6 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, useDisclosure } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 import { Header } from "../components/shared/Header";
-import { WebsocketsContext } from "../contexts/websocket.context";
-import { SocketService } from "../services/websocket.service";
-
 export function MainPage() {
 
   return (

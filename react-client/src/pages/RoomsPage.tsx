@@ -1,10 +1,12 @@
 import { Box, Stack } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
+import { CreateRoomModal } from "../components/CreateRoomModal";
 import { RoomInput } from "../components/Rooms/Input";
 import { IRoomItem, RoomLits } from "../components/Rooms/RoomList";
 import { WebsocketsContext } from "../contexts/websocket.context";
 
 export function RoomsPage() {
+
   const ws = useContext(WebsocketsContext);
   const [searchValue, setSearchValue] = useState('');
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value);
@@ -54,6 +56,8 @@ export function RoomsPage() {
           />
         <RoomLits rooms={rooms as IRoomItem[]} />
       </Stack>
+
+      <CreateRoomModal />
     </Box>
   )
 }
