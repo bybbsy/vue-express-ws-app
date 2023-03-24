@@ -1,5 +1,5 @@
 import { Box, ListItem, Text } from "@chakra-ui/react";
-import { IChatMessage } from "../../pages/ChatPage";
+import { IChatMessage } from "../../blocks/ChatBlock/CenterBlock";
 
 type MessageProps = {
   message: IChatMessage

@@ -104,7 +104,7 @@ class MessageController {
         }
       })
 
-      ws.send(JSON.stringify({ rooms, chatMessages }))
+      // ws.send(JSON.stringify({ rooms, chatMessages }))
     } catch (e) {
       console.log(e)
     }
