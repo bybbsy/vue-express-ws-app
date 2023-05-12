@@ -12,6 +12,9 @@ export function Header() {
         <Box>
           <Link as={RouterLink} to='/rooms'>Rooms</Link>
         </Box>
+        <Box>
+
+        </Box>
       </Flex>
     </Box>
   )

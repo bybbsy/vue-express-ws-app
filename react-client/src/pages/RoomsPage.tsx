@@ -1,18 +1,22 @@
-import { Box, Stack } from "@chakra-ui/react";
+import { Box, Button, IconButton, Stack, Text } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { CreateRoomModal } from "../components/CreateRoomModal";
 import { RoomInput } from "../components/Rooms/Input";
 import { IRoomItem, RoomLits } from "../components/Rooms/RoomList";
 import { WebsocketsContext } from "../contexts/websocket.context";
+import { AddIcon, CloseIcon, PlusSquareIcon } from "@chakra-ui/icons";
 
 export function RoomsPage() {
-
   const ws = useContext(WebsocketsContext);
   const [searchValue, setSearchValue] = useState('');
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value);
   const handleInputClear = () => setSearchValue('');
 
   const [rooms, setRooms] = useState<IRoomItem[] | []>([]);
+  const email = localStorage.getItem('email') as string;
+
+  console.log(rooms)
+  const joinedRoomsCount = rooms.filter(room => room.users.includes(email));
 
   const handleOnMessageEvent = (evt: any) => {
     const data = JSON.parse(evt.data);
@@ -38,7 +42,7 @@ export function RoomsPage() {
     <Box
       display='flex'
       justifyContent='center'
-      height='95%'
+      minHeight='95%'
       py='2'
     >
       <Stack
@@ -49,11 +53,30 @@ export function RoomsPage() {
         rounded='md'
         width='850px'
       >
-        <RoomInput
-          searchValue={searchValue}
-          onChange={handleInputChange}
-          onClear={handleInputClear}
-          />
+        <Box>
+          <Box
+            paddingY='2'
+            display='flex'
+            alignItems='center'
+            gap='2'
+          >
+            <RoomInput
+              searchValue={searchValue}
+              onChange={handleInputChange}
+              onClear={handleInputClear}
+            />
+            <IconButton
+            rounded='3xl'
+            colorScheme='green'
+              aria-label='Clear room search input'
+              icon={<AddIcon />}
+            />
+          </Box>
+
+          <Box>
+            <Text as='p'>Rooms list</Text>
+          </Box>
+        </Box>
         <RoomLits rooms={rooms as IRoomItem[]} />
       </Stack>
 

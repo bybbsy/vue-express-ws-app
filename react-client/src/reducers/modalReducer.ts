@@ -21,7 +21,7 @@ type ActionType = {
 }
 
 export const initialState: RootState = {
-  isOpen: true,
+  isOpen: false,
   name: '',
   size: 0,
   description: ''

@@ -17,7 +17,7 @@ export function RoomInput({ searchValue, onChange, onClear }: RoomInputProps) {
   };
 
   return (
-    <InputGroup paddingY='2'>
+    <InputGroup>
       <Input
         ref={inputRef}
         value={searchValue}

@@ -39,7 +39,7 @@ export function CreateRoomModal() {
   return (
     <Modal isOpen={state.isOpen} onClose={handleToggleModal}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent py='2'>
         <ModalHeader>Новая комната</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
