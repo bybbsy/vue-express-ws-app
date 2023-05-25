@@ -1,4 +1,5 @@
 import React from "react";
-import { SocketService, useSocketService } from "../services/websocket.service";
+import { useSocketService } from "../services/websocket.service";
+import { SocketServiceInterface } from "../services/interfaces";
 
-export const WebsocketsContext = React.createContext<SocketService>(useSocketService);
+export const WebsocketsContext = React.createContext(useSocketService);

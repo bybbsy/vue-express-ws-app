@@ -1,23 +1,4 @@
-
-export type ActionTypes =
-  'create-room'
-  | 'visit-room'
-  | 'join-room'
-  | 'leave-room'
-  | 'send-message'
-  | 'receive-message'
-  | 'receive-chat'
-  | 'receive-rooms'
-
-export type ResponeActionTypes =
-  'create-room-accepted'
-  | 'receive-chat-accepted'
-  | 'receive-rooms-accepted'
-
-export interface IWebsocketBody {
-  action: ActionTypes,
-  payload?: any
-}
+import { IWebsocketBody, SocketServiceInterface } from "./interfaces";
 
 export class SocketService {
   client: WebSocket;

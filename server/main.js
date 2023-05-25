@@ -18,6 +18,10 @@ mongoose
   )
   .catch(err => console.error(err))
 
+function getRoomId(message) {
+  return message.payload.roomId || message.payload.room?._id || undefined;
+}
+
 wss.on('connection', async ws => {
   try {
     await MessageController.sendRooms(ws, wss)
@@ -26,26 +30,41 @@ wss.on('connection', async ws => {
       try {
         const message = JSON.parse(msg) 
         const actionType = message.action
-
+        
         switch (actionType) {
           case 'join-room':
-            MessageController.joinRoom(message.payload, ws, wss)
+            await MessageController.joinRoom(message.payload, ws, wss)
+            await MessageController.sendRooms(ws, wss);
             break
           case 'create-room':
-            MessageController.createRoom(message.payload, ws, wss)
+            await MessageController.createRoom(message.payload, ws, wss)
+            // #FIXME Нужно ли тут чат присылать ???
+            await MessageController.sendRoomsOrChat({room: message.payload}, ws, wss) 
             break
 					case 'leave-room':
-						MessageController.leaveRoom(message.payload, ws, wss)
+            // ws.roomId = getRoomId(message);
+					  await MessageController.leaveRoom(message.payload, ws, wss)
+            await MessageController.sendRooms(ws, wss);
 						break
           case 'send-message':
-            MessageController.sendMessage(message.payload, ws, wss)
+            await MessageController.sendMessage(message.payload, ws, wss)
+            await MessageController.sendRoomsOrChat(message.payload, ws, wss)
             break
           case 'receive-chat':
+            ws.roomId = getRoomId(message);
             MessageController.sendChat(message.payload, ws, wss)
+            break
+          case 'leave-chat':
+            ws.roomId = undefined;
+
+            // #TODO
             break
           case 'receive-rooms':
             MessageController.sendRooms(ws, wss)
             break
+          case 'receive-users':
+            MessageController.sendUsers(message.payload, ws, wss)
+            break;
         }
       } catch (e) {
         console.log('Error: ' + e)

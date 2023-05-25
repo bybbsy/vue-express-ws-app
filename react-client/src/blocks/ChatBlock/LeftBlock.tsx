@@ -5,7 +5,8 @@ export function LeftBlock() {
   return (
     <GridItem
       colStart={1}
-      colEnd={2}>
+      colEnd={2}
+      paddingTop={6}>
       <Stack
         direction='row'
         justifyContent='flex-end'

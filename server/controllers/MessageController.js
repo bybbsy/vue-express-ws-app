@@ -1,21 +1,17 @@
 const roomSchema = require('../model/room')
 const { WebSocket } = require('ws')
 const ChatService = require('../services/chat.service')
-
+const RoomService = require('../services/room.service')
 class MessageController {
   constructor () {}
 
   async createRoom (room, ws, wss) {
     try {
-
-      console.log(room)
       const newRoom = new roomSchema(room)
 
       await newRoom.save()
 
       await ChatService.createChat(newRoom.id)
-
-      this.sendRoomsAndChat({room}, ws, wss)
     } catch (e) {
       console.log(e)
     }
@@ -30,12 +26,11 @@ class MessageController {
       const isNotFull = roomInDb.users.length < roomInDb.size
 
       if (!userInRoom && isNotFull) {
+
+        
         roomInDb.users.push(username)
         await roomInDb.save()
       }
-
-      this.sendRoomsAndChat(payload, ws, wss)
-
     } catch (e) {
       console.log(e)
     }
@@ -54,9 +49,6 @@ class MessageController {
         roomInDb.users = updatedRoom
         await roomInDb.save()
       }
-
-      this.sendRooms(ws, wss)
-
     } catch (e) {
       console.log(e)
     }
@@ -80,19 +72,34 @@ class MessageController {
     try {
       const { _id } = payload.room; 
       const chatMessages = await ChatService.getChatMessages(_id)
-      console.log(chatMessages)
+      
       wss.clients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
+        if (client.readyState === WebSocket.OPEN && client.roomId === _id) {
           client.send(JSON.stringify({ chatMessages }))
         }
       })
-
     } catch (e) {
       console.log(e)
     }
   }
 
-  async sendRoomsAndChat(payload, ws, wss) {
+  async sendUsers(payload, ws, wss) {
+    try {
+      const { roomId } = payload;
+      const users = await RoomService.getUsersByRoomId(roomId);
+
+      // TODO добавить проверку на то что пользователь в комнате и ему нужно отправлять пользователей
+      wss.clients.forEach(client => {
+        if(client.readyState === WebSocket.OPEN && client.roomId === roomId) {
+          client.send(JSON.stringify({ users }));
+        }
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  async sendRoomsOrChat(payload, ws, wss) {
     try {
       const rooms = await roomSchema.find()
       const { _id } = payload.room; 
@@ -100,7 +107,12 @@ class MessageController {
  
       wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify({ rooms, chatMessages }))
+
+          if(client.roomId === _id) {
+            client.send(JSON.stringify({ chatMessages }))
+          } else {
+            client.send(JSON.stringify({ rooms }))
+          }
         }
       })
 
@@ -112,9 +124,7 @@ class MessageController {
 
   async sendMessage(payload, ws, wss) {
     try {
-      ChatService.sendMessage(payload, ws, wss)
-
-      this.sendRoomsAndChat(payload, ws, wss)
+      await ChatService.sendMessage(payload, ws, wss)
     } catch (e) {
       console.log(e)
     }
