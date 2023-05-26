@@ -87,7 +87,6 @@ class MessageController {
     try {
       const { roomId } = payload;
       const users = await RoomService.getUsersByRoomId(roomId);
-
       // TODO добавить проверку на то что пользователь в комнате и ему нужно отправлять пользователей
       wss.clients.forEach(client => {
         if(client.readyState === WebSocket.OPEN && client.roomId === roomId) {

@@ -1,4 +1,4 @@
-import { Box, GridItem } from "@chakra-ui/react";
+import { Box, Code, GridItem } from "@chakra-ui/react";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { MessageInput } from "../../components/Chat/MessageInput";
@@ -34,10 +34,10 @@ export function CenterBlock() {
   const [chatMessages, setChatMessages] = useState<IChatMessage[]>([]);
   const [inputValue, setInputvalue] = useState('');
 
-  const currUser = localStorage.getItem('email') || '';
+  const email = localStorage.getItem('email') || '';
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value.trim();
+    const value = e.target.value;
     setInputvalue(value);
   }, [inputValue]);
 
@@ -49,7 +49,7 @@ export function CenterBlock() {
           '_id': id
         },
         message: {
-          authorName: currUser,
+          authorName: email,
           dateSent: new Date,
           text: inputValue
         }
@@ -65,7 +65,7 @@ export function CenterBlock() {
       if (data.chatMessages) {
         const chatMessages = data.chatMessages.messages.map((msg: IChatMessage) => ({
           ...msg,
-          isMy: msg.authorName === currUser
+          isMy: msg.authorName === email
         }))
         setChatMessages(chatMessages);
       }
@@ -98,8 +98,19 @@ export function CenterBlock() {
       flexDirection='column'
       overflowY='hidden'
     >
-      <Box>
-        <p>Room id: {id}</p>
+      <Box
+        display='flex'
+        alignItems='center'>
+        User:
+        <Code
+          ml='2'
+          variant='solid'
+          colorScheme='blue'
+
+          fontSize='sm'
+        >
+          {email}
+        </Code>
       </Box>
       <Box
         bg='white'

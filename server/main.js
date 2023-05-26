@@ -35,6 +35,7 @@ wss.on('connection', async ws => {
           case 'join-room':
             await MessageController.joinRoom(message.payload, ws, wss)
             await MessageController.sendRooms(ws, wss);
+            await MessageController.sendUsers({roomId: message.payload.room._id}, ws, wss)
             break
           case 'create-room':
             await MessageController.createRoom(message.payload, ws, wss)
@@ -45,6 +46,7 @@ wss.on('connection', async ws => {
             // ws.roomId = getRoomId(message);
 					  await MessageController.leaveRoom(message.payload, ws, wss)
             await MessageController.sendRooms(ws, wss);
+            await MessageController.sendUsers({roomId: message.payload.room._id}, ws, wss)
 						break
           case 'send-message':
             await MessageController.sendMessage(message.payload, ws, wss)

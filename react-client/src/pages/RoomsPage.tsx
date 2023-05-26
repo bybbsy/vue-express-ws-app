@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, Stack, Text } from "@chakra-ui/react";
+import { Badge, Box, Button, Code, IconButton, Stack, Text } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
 import { CreateRoomModal } from "../components/CreateRoomModal";
 import { RoomInput } from "../components/Rooms/Input";
@@ -55,6 +55,21 @@ export function RoomsPage() {
       >
         <Box>
           <Box
+            display='flex'
+            alignItems='center'
+            my='2'>
+            User:
+            <Code
+              ml='2'
+              variant='solid'
+              colorScheme='blue'
+
+              fontSize='sm'
+            >
+              {email}
+            </Code>
+          </Box>
+          <Box
             paddingY='2'
             display='flex'
             alignItems='center'
@@ -66,8 +81,8 @@ export function RoomsPage() {
               onClear={handleInputClear}
             />
             <IconButton
-            rounded='3xl'
-            colorScheme='green'
+              rounded='3xl'
+              colorScheme='green'
               aria-label='Clear room search input'
               icon={<AddIcon />}
             />

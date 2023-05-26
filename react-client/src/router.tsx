@@ -2,19 +2,24 @@ import { createBrowserRouter } from "react-router-dom";
 import { RoomsPage } from "./pages/RoomsPage";
 import { ChatPage } from "./pages/ChatPage";
 import { MainPage } from "./pages/MainPage";
+import { AuthPage } from "./pages/AuthPage";
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <MainPage />,
+    element: <MainPage/>,
     children: [
       {
         path: '/rooms',
-        element: <RoomsPage />
+        element: <RoomsPage/>
       },
       {
         path: '/rooms/:id',
-        element: <ChatPage />
+        element: <ChatPage/>
+      },
+      {
+        path: '/auth',
+        element: <AuthPage/>
       }
     ]
   }

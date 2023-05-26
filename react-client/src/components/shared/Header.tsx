@@ -7,13 +7,10 @@ export function Header() {
       <Text>A-Chat</Text>
       <Flex flexDirection='row' gap='5'>
         <Box>
-          <Link as={RouterLink} to='/'>Main Page</Link>
+          <Link as={RouterLink} to='/auth'>Auth</Link>
         </Box>
         <Box>
           <Link as={RouterLink} to='/rooms'>Rooms</Link>
-        </Box>
-        <Box>
-
         </Box>
       </Flex>
     </Box>
