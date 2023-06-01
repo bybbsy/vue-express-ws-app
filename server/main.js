@@ -40,7 +40,7 @@ wss.on('connection', async ws => {
           case 'create-room':
             await MessageController.createRoom(message.payload, ws, wss)
             // #FIXME Нужно ли тут чат присылать ???
-            await MessageController.sendRoomsOrChat({room: message.payload}, ws, wss) 
+            await MessageController.sendRooms(ws, wss)
             break
 					case 'leave-room':
             // ws.roomId = getRoomId(message);

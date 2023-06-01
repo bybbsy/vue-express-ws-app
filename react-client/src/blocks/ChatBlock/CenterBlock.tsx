@@ -6,6 +6,7 @@ import { SendMessageButton } from "../../components/Chat/SendMessageButton";
 import { MessagesList } from "../../components/Messages/MessagesList";
 import { IRoomItem } from "../../components/Rooms/RoomList";
 import { WebsocketsContext } from "../../contexts/websocket.context";
+import { useAppSelector } from "../../store/hooks";
 
 
 export interface IChatState {
@@ -34,7 +35,7 @@ export function CenterBlock() {
   const [chatMessages, setChatMessages] = useState<IChatMessage[]>([]);
   const [inputValue, setInputvalue] = useState('');
 
-  const email = localStorage.getItem('email') || '';
+  const email = useAppSelector(state => state.user.email);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;

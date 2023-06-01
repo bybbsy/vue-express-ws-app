@@ -4,7 +4,7 @@ import { Header } from "../components/shared/Header";
 export function MainPage() {
 
   return (
-    <Box className="App" bg='gray.100'>
+    <Box className="App">
       <Header />
       <Outlet />
     </Box>

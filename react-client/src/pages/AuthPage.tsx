@@ -1,9 +1,13 @@
 import { Box, Button, FormControl, FormErrorMessage, FormHelperText, FormLabel, Input, Stack, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { setEmail } from "../store/user/reducers";
 
 export function AuthPage() {
-  const [email, setEmail] = useState<string | null>(null);
+  const authEmail = useAppSelector(state => state.user.email);
+  const dispatch = useAppDispatch()
+  const [emailAddress, setEmailAddress] = useState<string | null>(null);
   const [password, setPassword] = useState<string | null>(null);
 
   const navigate = useNavigate();
@@ -12,7 +16,7 @@ export function AuthPage() {
     const val = e.target.value;
 
     if (e.target.name === 'email') {
-      setEmail(val.trim());
+      setEmailAddress(val.trim());
     } else if (e.target.name === 'password') {
       setPassword(val.trim())
     }
@@ -21,13 +25,22 @@ export function AuthPage() {
   const handleFormSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
 
-    if (email?.length && password?.length) {
-      localStorage.setItem('email', email);
+    if (emailAddress?.length && password?.length) {
+      localStorage.setItem('email', emailAddress);
 
+      dispatch(setEmail(emailAddress))
       navigate('/rooms')
     }
   }
 
+  console.log(authEmail);
+
+
+  if(authEmail) {
+    console.log(authEmail);
+
+    navigate('/rooms')
+  }
 
   return (
     <Box

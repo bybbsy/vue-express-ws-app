@@ -3,7 +3,8 @@ import { Link as RouterLink } from "react-router-dom";
 
 export function Header() {
   return (
-    <Box as='header' display='flex' justifyContent='space-between' alignItems='center' paddingX='10'>
+    <Box as='header'
+    paddingY={2} display='flex' justifyContent='space-between' alignItems='center' paddingX='10'>
       <Text>A-Chat</Text>
       <Flex flexDirection='row' gap='5'>
         <Box>

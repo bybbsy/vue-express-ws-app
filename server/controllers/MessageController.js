@@ -107,6 +107,7 @@ class MessageController {
       wss.clients.forEach(client => {
         if (client.readyState === WebSocket.OPEN) {
 
+
           if(client.roomId === _id) {
             client.send(JSON.stringify({ chatMessages }))
           } else {

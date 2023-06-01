@@ -14,6 +14,7 @@ export function ChatPage() {
       templateColumns='repeat(5, 1fr)'
       gap={4}
       paddingX='5'
+      bg='gray.100'
     >
       <LeftBlock />
       <CenterBlock />

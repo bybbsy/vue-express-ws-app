@@ -1,19 +1,20 @@
 import { Box, Button, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Stack } from "@chakra-ui/react";
-import React, { useContext, useReducer } from "react";
+import React, { useContext, useDebugValue, useReducer } from "react";
 import { WebsocketsContext } from "../contexts/websocket.context";
 import { initialState, modalReducer } from "../reducers/modalReducer";
+import { useAppSelector } from "../store/hooks";
 
+type CreateRoomModalProps = {
+  handleToggleModal: () => void
+}
 
-export function CreateRoomModal() {
+export function CreateRoomModal({
+  handleToggleModal,
+}: CreateRoomModalProps) {
+  const isOpenedModal = useAppSelector(state => state.modal.isOpen);
+
   const ws = useContext(WebsocketsContext);
   const [state, dispatch] = useReducer(modalReducer, initialState);
-
-  const handleToggleModal = () => {
-    dispatch({
-      type: 'toggleModal',
-      payload: {}
-    })
-  }
 
   const handleSubmit = () => {
     ws.send({
@@ -37,7 +38,9 @@ export function CreateRoomModal() {
   }
 
   return (
-    <Modal isOpen={state.isOpen} onClose={handleToggleModal}>
+    <Modal
+      isOpen={isOpenedModal}
+      onClose={handleToggleModal}>
       <ModalOverlay />
       <ModalContent py='2'>
         <ModalHeader>Новая комната</ModalHeader>
@@ -68,7 +71,7 @@ export function CreateRoomModal() {
           </FormControl>
           <ModalFooter>
             <Button colorScheme='blue' mr={2} onClick={handleSubmit}>Сохранить</Button>
-            <Button>Отмена</Button>
+            <Button onClick={handleToggleModal}>Отмена</Button>
           </ModalFooter>
         </ModalBody>
       </ModalContent>

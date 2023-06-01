@@ -5,18 +5,27 @@ import { RoomInput } from "../components/Rooms/Input";
 import { IRoomItem, RoomLits } from "../components/Rooms/RoomList";
 import { WebsocketsContext } from "../contexts/websocket.context";
 import { AddIcon, CloseIcon, PlusSquareIcon } from "@chakra-ui/icons";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { toggleModal } from "../store/modal/reducers";
+import { setEmail } from "../store/user/reducers";
 
 export function RoomsPage() {
   const ws = useContext(WebsocketsContext);
+  const isOpenedModal = useAppSelector(state => state.modal.isOpen);
+  const dispatch = useAppDispatch();
+
   const [searchValue, setSearchValue] = useState('');
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setSearchValue(e.target.value);
   const handleInputClear = () => setSearchValue('');
 
-  const [rooms, setRooms] = useState<IRoomItem[] | []>([]);
-  const email = localStorage.getItem('email') as string;
+  const handleToggleModal = () => {
+    dispatch(toggleModal())
+    console.log(isOpenedModal);
+  };
 
-  console.log(rooms)
-  const joinedRoomsCount = rooms.filter(room => room.users.includes(email));
+  const [rooms, setRooms] = useState<IRoomItem[] | []>([]);
+
+  const email = localStorage.getItem('email') || null;
 
   const handleOnMessageEvent = (evt: any) => {
     const data = JSON.parse(evt.data);
@@ -27,6 +36,11 @@ export function RoomsPage() {
   }
 
   useEffect(() => {
+
+    if(email) {
+      dispatch(setEmail(email));
+    }
+
     if (ws.isReady) {
       ws.send({ action: 'receive-rooms' })
     }
@@ -44,6 +58,7 @@ export function RoomsPage() {
       justifyContent='center'
       minHeight='95%'
       py='2'
+      bg='gray.100'
     >
       <Stack
         spacing={3}
@@ -83,7 +98,8 @@ export function RoomsPage() {
             <IconButton
               rounded='3xl'
               colorScheme='green'
-              aria-label='Clear room search input'
+              aria-label="toggle modal button"
+              onClick={handleToggleModal}
               icon={<AddIcon />}
             />
           </Box>
@@ -95,7 +111,7 @@ export function RoomsPage() {
         <RoomLits rooms={rooms as IRoomItem[]} />
       </Stack>
 
-      <CreateRoomModal />
+     {isOpenedModal &&  <CreateRoomModal handleToggleModal={handleToggleModal}/>}
     </Box>
   )
 }

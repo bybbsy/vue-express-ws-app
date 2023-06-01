@@ -3,11 +3,12 @@ import { Box, GridItem, List, ListItem, Text } from "@chakra-ui/react";
 import { useContext, useEffect, useMemo, useState } from "react";
 import { WebsocketsContext } from "../../contexts/websocket.context";
 import { useParams } from "react-router-dom";
+import { useAppSelector } from "../../store/hooks";
 
 export function RightBlock() {
   const [users, setUsers] = useState([]);
   const ws = useContext(WebsocketsContext);
-  const email = localStorage.getItem('email');
+  const email = useAppSelector(state => state.user.email);
   const { id } = useParams();
 
   const handleOnUsersResponse = (evt: any) => {

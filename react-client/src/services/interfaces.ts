@@ -9,12 +9,6 @@ export type ActionTypes =
   | 'receive-rooms'
   | 'receive-users'
 
-export type ResponeActionTypes =
-  'create-room-accepted'
-  | 'receive-chat-accepted'
-  | 'receive-rooms-accepted'
-  | 'receive-users-accepted'
-
 export interface IWebsocketBody {
   action: ActionTypes,
   payload?: any

@@ -3,6 +3,7 @@ import { RoomItem } from "./RoomItem";
 import { List } from '@chakra-ui/react';
 import { WebsocketsContext } from '../../contexts/websocket.context';
 import { SocketService } from '../../services/websocket.service';
+import { useAppSelector } from '../../store/hooks';
 
 export interface IRoomItem {
   _id: string | number,
@@ -13,7 +14,7 @@ export interface IRoomItem {
 }
 
 export function RoomLits({rooms}: {rooms: IRoomItem[]}) {
-  const currentUser = localStorage.getItem('email') || '';
+  const currentUser = useAppSelector(state => state.user.email) || '';
   const ws = useContext(WebsocketsContext)!;
 
   const handleJoinRoom = (room: IRoomItem) => {
@@ -40,6 +41,7 @@ export function RoomLits({rooms}: {rooms: IRoomItem[]}) {
     }
   };
 
+
   return (
     <div>
       <a href=""></a>
@@ -55,8 +57,5 @@ export function RoomLits({rooms}: {rooms: IRoomItem[]}) {
       </List>
     </div>
   )
-}
-function useRef<T>(arg0: null) {
-  throw new Error('Function not implemented.');
 }
 
