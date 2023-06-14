@@ -1,8 +1,8 @@
 import { Badge, Box, Button, Code, IconButton, Stack, Text } from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { CreateRoomModal } from "../components/CreateRoomModal";
 import { RoomInput } from "../components/Rooms/Input";
-import { IRoomItem, RoomLits } from "../components/Rooms/RoomList";
+import { IRoomItem, RoomList } from "../components/Rooms/RoomList";
 import { WebsocketsContext } from "../contexts/websocket.context";
 import { AddIcon, CloseIcon, PlusSquareIcon } from "@chakra-ui/icons";
 import { useAppDispatch, useAppSelector } from "../store/hooks";
@@ -11,7 +11,6 @@ import { setEmail } from "../store/user/reducers";
 
 export function RoomsPage() {
   const ws = useContext(WebsocketsContext);
-  const isOpenedModal = useAppSelector(state => state.modal.isOpen);
   const dispatch = useAppDispatch();
 
   const [searchValue, setSearchValue] = useState('');
@@ -20,8 +19,7 @@ export function RoomsPage() {
 
   const handleToggleModal = () => {
     dispatch(toggleModal())
-    console.log(isOpenedModal);
-  };
+  }
 
   const [rooms, setRooms] = useState<IRoomItem[] | []>([]);
 
@@ -35,9 +33,15 @@ export function RoomsPage() {
     }
   }
 
+  const memo = useMemo(() => [...rooms].sort((a, b) => (b.users.length - a.users.length)), [rooms])
+
+  const handleSearchRoom = () => {
+    alert('🛠️ [WIP] A search feautre will be implemented soon')
+  }
+
   useEffect(() => {
 
-    if(email) {
+    if (email) {
       dispatch(setEmail(email));
     }
 
@@ -95,23 +99,38 @@ export function RoomsPage() {
               onChange={handleInputChange}
               onClear={handleInputClear}
             />
-            <IconButton
+            <Button
+              colorScheme='teal'
+              type='submit'
+              onClick={handleSearchRoom}
+            >
+              Search
+            </Button>
+            <Button
+              colorScheme='green'
+              type='submit'
+              onClick={handleToggleModal}
+            >
+              Create room
+            </Button>
+            {/* <IconButton
+
               rounded='3xl'
               colorScheme='green'
               aria-label="toggle modal button"
               onClick={handleToggleModal}
               icon={<AddIcon />}
-            />
+            /> */}
           </Box>
 
           <Box>
             <Text as='p'>Rooms list</Text>
           </Box>
         </Box>
-        <RoomLits rooms={rooms as IRoomItem[]} />
+        <RoomList rooms={memo as IRoomItem[]} />
       </Stack>
 
-     {isOpenedModal &&  <CreateRoomModal handleToggleModal={handleToggleModal}/>}
+      {<CreateRoomModal handleToggleModal={handleToggleModal} />}
     </Box>
   )
 }

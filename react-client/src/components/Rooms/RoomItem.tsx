@@ -42,6 +42,7 @@ export function RoomItem({
           </Text>
           <Box
             marginY='2'>
+            <Text>{room.description}</Text>
             <Badge
               variant='solid'
               colorScheme='blue'

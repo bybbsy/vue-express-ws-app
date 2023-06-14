@@ -1,5 +1,5 @@
 import { CloseIcon } from "@chakra-ui/icons";
-import { IconButton, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
+import { Button, IconButton, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 
 interface RoomInputProps {

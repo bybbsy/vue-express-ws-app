@@ -1,5 +1,5 @@
 import { Box, Code, GridItem } from "@chakra-ui/react";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { MessageInput } from "../../components/Chat/MessageInput";
 import { SendMessageButton } from "../../components/Chat/SendMessageButton";
@@ -7,7 +7,7 @@ import { MessagesList } from "../../components/Messages/MessagesList";
 import { IRoomItem } from "../../components/Rooms/RoomList";
 import { WebsocketsContext } from "../../contexts/websocket.context";
 import { useAppSelector } from "../../store/hooks";
-
+import { isSameDay } from 'date-fns'
 
 export interface IChatState {
   currentRoom: IRoomItem | null
@@ -36,6 +36,22 @@ export function CenterBlock() {
   const [inputValue, setInputvalue] = useState('');
 
   const email = useAppSelector(state => state.user.email);
+
+  // const todayMessages = useMemo(() => {
+
+  // }, [])
+
+  const todayMessagesCount = () => chatMessages.reduce((acc, message) => {
+    console.log(typeof new Date().toUTCString(), new Date(message.dateSent));
+
+    // alert(isSameDay(new Date(), message.dateSent));
+
+    if(isSameDay(new Date(), new Date(message.dateSent))) {
+
+      acc += 1;
+    }
+    return acc;
+  }, 0);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -112,6 +128,9 @@ export function CenterBlock() {
         >
           {email}
         </Code>
+      </Box>
+      <Box>
+        <span>{todayMessagesCount()}</span>
       </Box>
       <Box
         bg='white'

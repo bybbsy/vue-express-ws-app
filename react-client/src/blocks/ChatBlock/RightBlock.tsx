@@ -5,6 +5,17 @@ import { WebsocketsContext } from "../../contexts/websocket.context";
 import { useParams } from "react-router-dom";
 import { useAppSelector } from "../../store/hooks";
 
+
+function sortEmails(a: string, b: string) {
+  if (a< b) {
+    return -1;
+  }
+  if (a > b) {
+    return 1;
+  }
+  return 0;
+}
+
 export function RightBlock() {
   const [users, setUsers] = useState([]);
   const ws = useContext(WebsocketsContext);
@@ -21,7 +32,13 @@ export function RightBlock() {
     }
   }
 
-  const cachedUsersList = useMemo(() => users, [users])
+  // #FIXME сделать нормальным, не из useState
+  // #TODO Варианты:
+  //       -- Количество сообщений от меня
+  //       -- Количество сообщений за сегодня
+  //       -- Самое длинное слово
+
+  const cachedUsersList = useMemo(() => users.sort(sortEmails), [users])
 
   useEffect(() => {
     ws.send({
@@ -30,7 +47,6 @@ export function RightBlock() {
     })
 
     ws.onMessage(handleOnUsersResponse);
-
 
     return () => {
       ws.off('message', handleOnUsersResponse);
