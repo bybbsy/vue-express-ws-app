@@ -1,11 +1,13 @@
 import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
 import modalReducer from './modal/reducers';
 import userReducer from './user/reducers';
+import postsReducer from "./posts/reducers";
 
 export const store = configureStore({
   reducer: {
     modal: modalReducer,
     user: userReducer,
+    posts: postsReducer,
   }
 })
 

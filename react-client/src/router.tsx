@@ -3,6 +3,7 @@ import { RoomsPage } from "./pages/RoomsPage";
 import { ChatPage } from "./pages/ChatPage";
 import { MainPage } from "./pages/MainPage";
 import { AuthPage } from "./pages/AuthPage";
+import { PostsPage } from "./pages/PostsPage";
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ export const router = createBrowserRouter([
       {
         path: '/auth',
         element: <AuthPage/>
+      },
+      {
+        path: '/posts',
+        element: <PostsPage/>
       }
     ]
   }
